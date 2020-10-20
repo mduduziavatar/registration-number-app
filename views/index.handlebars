@@ -22,22 +22,25 @@
                     <input type="radio" name="town" value="CY" class="filter">Bellville
                     <input type="radio" name="town" value="CJ" class="filter">Paarl
                     <input type="radio" name="town" value="CA" class="filter"> Cape Town
+                    <div> <button type="submit" class="filterRegNumber">filter</button></div>
 
                 </div>
                 <div> <button type="submit" class="filterRegNumber">Clear List</button></div>
 
                 <hr>
 
+                <div class="regNumber">
+                    <ul>
+                        {{#each regNumber}}
+                        <li class="textColor">{{this.description}}</li>
+                        {{/each}}
+                    </ul>
 
+
+                </div>
 
             </form>
-            <div class="regNumber">
 
-                {{#each regNumbers}}
-                    <h2>{{regNumber}}</h2>
-                {{/each}}
-
-            </div>
         </div>
     </div>
 </div>

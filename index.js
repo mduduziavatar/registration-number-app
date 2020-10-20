@@ -1,7 +1,10 @@
 const express = require('express');
+const Routes = require('./routes');
+const RegFactoryFunction = require('./reg-num');
 const exphbs = require('express-handlebars');
 const bodyParser = require('body-parser');
 const app = express();
+
 // app flash setups 
 const flash = require('express-flash');
 const session = require('express-session')
@@ -15,14 +18,13 @@ app.use(session({
     cookie: { secure: true }
 }))
 
-const pg = require("pg");
-const Routes = require('./routes');
+const pg = require('pg');
 const Pool = pg.Pool;
 const connectionString = process.env.DATABASE_URL || 'postgresql://mdu:pg123@localhost:5432/registration_numbers';
 const pool = new Pool({
     connectionString
 });
-const RegFactoryFunction = require('./reg-num')
+// console.log(pool);
 const regFactory = RegFactoryFunction(pool);
 const routes = Routes(regFactory)
 
@@ -31,23 +33,29 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // parse application/json
 app.use(bodyParser.json());
 //sending back home
-app.get('/', routes.index);
+
+app.get('/', async function(req, res) {
+    res.render('index', {
+        regNumber: await regFactory.getAllRegNum()
+    });
+})
+
 
 //registration app setup front page
 app.post("/registration", async function(req, res) {
 
     const regNumbers = req.body.addRegNum;
-    const towns = req.body.town;
-    const allPlates = await regFactory.addRegNumbers(regNumbers)
-    console.log(regNumbers)
+    // const towns = req.body.town;
+    const added = await regFactory.addRegNumbers(regNumbers);
+    const allPlates = await regFactory.getAllRegNum();
+    // console.log(regNumbers)
 
     res.render('index', {
-        regNumber: await allPlates
+        regNumber: allPlates
     });
 
 });
 
-app.get('/registration', routes.registrationAdd);
 // to reset db
 app.get('/reset', routes.reset);
 

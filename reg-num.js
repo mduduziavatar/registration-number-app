@@ -1,4 +1,11 @@
 module.exports = function RegFactoryFunction(pool) {
+
+    // const pg = require('pg');
+    // const Pool = pg.Pool;
+    // const connectionString = process.env.DATABASE_URL || 'postgresql://mdu:pg123@localhost:5432/registration_numbers';
+    // const pool = new Pool({
+    //     connectionString
+    // });
     async function addRegNumbers(items) {
         // const regex = /C[AYJ]d{3,6}$/;
         // const correctOnly = items.replace(regex, "")
@@ -6,7 +13,8 @@ module.exports = function RegFactoryFunction(pool) {
         // getting the correct two letters of reg number
         if (!items == "") {
             const regStartsWith = items.substring(0, 2);
-            const dbTownsId = await pool.query(`select id from towns where startswith =$1`, [regStartsWith]);
+            const dbTownsId = await pool.query(`select id from towns where startswith = $1`, [regStartsWith]);
+
             const townsId = dbTownsId.rows[0].id;
 
 
@@ -18,23 +26,24 @@ module.exports = function RegFactoryFunction(pool) {
                 return false
             }
             if (checker.rowCount === 0) {
-                await pool.query(`insert into registrations (description, towns_id) values ($1, $2)`, [items], [townsId]);
+                console.log('test');
+                await pool.query(`insert into registrations (description, towns_id) values ($1, $2)`, [items, townsId]);
+                console.log('test1');
+
             }
         }
     }
 
-    // function displaying registrations
-    function selectedRadio(town) {
-        if (town == "all") {
-            return userMappedData;
+
+    async function filter(town) {
+        if (town) {
+            const filtered = await pool.query(`select * from registration where town_id = $1;`, [town]);
+            return filtered.rows
         } else {
-            var list = [];
-            for (var i = 0; i < userMappedData.length; i++) {
-                if (userMappedData[i].startsWith(town)) {
-                    list.push(userMappedData[i])
-                }
+            if (town === 'all') {
+                const allRegistrations = await pool.query(`select description from registrations`);
+                return allRegistrations.rows
             }
-            return list;
         }
     }
     // this is for local storage
@@ -42,18 +51,6 @@ module.exports = function RegFactoryFunction(pool) {
         const allReg = await pool.query(`select description from registrations`);
         return allReg.rows;
 
-    }
-
-
-    //Gets all valid reg being entered
-    function showList(item) {
-        regNumber.innerHTML = "";
-        for (var i = 0; i < item.length; i++) {
-            const currentItem = item[i];
-            const theElement = document.createElement("div");
-            theElement.innerHTML = currentItem;
-            regNumber.appendChild(theElement);
-        }
     }
 
     async function reset() {
@@ -64,9 +61,8 @@ module.exports = function RegFactoryFunction(pool) {
     return {
         addRegNumbers,
         getAllRegNum,
-        selectedRadio,
-        showList,
-        reset
+        reset,
+        filter
 
     }
 }
