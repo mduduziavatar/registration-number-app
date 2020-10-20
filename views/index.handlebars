@@ -1,0 +1,43 @@
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <form action="/registration" method="POST">
+
+                <h1>Registration numbers</h1>
+
+                <div class="message">
+
+                </div>
+
+
+                <div>
+                    <input name="addRegNum" class="regNumberEntered" placeholder="enter a registration number">
+                    <button type="submit" class="addRegNumber btn blue">Add reg number</button>
+                </div>
+
+                <div id="filtered" class="filteredTown">
+                    <strong>Filter by town</strong>
+
+                    <input type="radio" name="town" value="all" class="filter">Show all
+                    <input type="radio" name="town" value="CY" class="filter">Bellville
+                    <input type="radio" name="town" value="CJ" class="filter">Paarl
+                    <input type="radio" name="town" value="CA" class="filter"> Cape Town
+
+                </div>
+                <div> <button type="submit" class="filterRegNumber">Clear List</button></div>
+
+                <hr>
+
+
+
+            </form>
+            <div class="regNumber">
+
+                {{#each regNumbers}}
+                    <h2>{{regNumber}}</h2>
+                {{/each}}
+
+            </div>
+        </div>
+    </div>
+</div>
