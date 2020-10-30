@@ -26,42 +26,25 @@ const pool = new Pool({
 });
 // console.log(pool);
 const regFactory = RegFactoryFunction(pool);
-const routes = Routes(regFactory)
-
+const routes = Routes(regFactory);
+app.use(flash());
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
 // parse application/json
 app.use(bodyParser.json());
 //sending back home
 
-app.get('/', async function(req, res) {
-    res.render('index', {
-        regNumber: await regFactory.getAllRegNum()
-    });
-})
-
+app.get('/', routes.index);
 
 //registration app setup front page
-app.post("/registration", async function(req, res) {
-
-    const regNumbers = req.body.addRegNum;
-    // const towns = req.body.town;
-    const added = await regFactory.addRegNumbers(regNumbers);
-    const allPlates = await regFactory.getAllRegNum();
-    // console.log(regNumbers)
-
-    res.render('index', {
-        regNumber: allPlates
-    });
-
-});
+app.post("/registration", routes.registrationAdd);
 
 // to reset db
-app.get('/reset', routes.reset);
+app.get('/registration', routes.filtered);
 
+app.get('/reset', routes.reset)
 
-
-const PORT = process.env.PORT || 3003;
+const PORT = process.env.PORT || 4008;
 
 app.listen(PORT, function() {
     console.log('App starting on port', PORT);

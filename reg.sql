@@ -11,3 +11,4 @@ create table registrations(
 	foreign key (towns_id) references towns(id)
 );
 
+
