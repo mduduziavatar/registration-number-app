@@ -11,8 +11,6 @@ const pool = new Pool({
 let regFactory = RegFactoryFunction(pool);
 describe("The registration number database functions", function() {
 
-    const INSERT_QUERY = `insert into registrations(description, towns_id) values ($1, $2)`;
-
     beforeEach(async function() {
         await pool.query("delete from registrations");
     });
