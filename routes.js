@@ -51,6 +51,7 @@ module.exports = function(regFactory) {
     async function reset(req, res, next) {
         try {
             var reset = await regFactory.reset()
+            req.flash("errors", "All registrations deleted");
             res.render('index')
         } catch (err) {
             next(err)
