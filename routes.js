@@ -10,7 +10,8 @@ module.exports = function(regFactory) {
     }
     async function registrationAdd(req, res, next) {
         try {
-            const regNumbers = req.body.addRegNum;
+            const upReg = req.body.addRegNum;
+            const regNumbers = upReg.toUpperCase()
             if (regNumbers !== "") {
                 if (/C[AYJ] \d{3,6}$/.test(regNumbers) || /C[AYJ] \d{3}-\d{3}$/.test(regNumbers)) {
                     if (await regFactory.checker(regNumbers) === 0) {
@@ -27,6 +28,7 @@ module.exports = function(regFactory) {
                 req.flash("errors", "please enter a registration");
             }
             const allPlates = await regFactory.getAllRegNum();
+
             res.render('index', {
                 regNumber: allPlates
             });
